@@ -15,7 +15,7 @@ class Kohana_Starparse {
         // catch the output of this command
         ob_start(); {
             passthru($cmd);
-        } $ret = trim(ob_get_clean());
+        } $ret = ob_get_clean();
         
         if ($ret === 'error')
             return FALSE;
@@ -23,6 +23,80 @@ class Kohana_Starparse {
         return $ret;
     }
     
+    /*
+     * 	preg_match_all(, $replay_details, $matches);
+	var_dump($matches[1]);
+	var_dump($matches[2]);
+     */
+    
+    /*
+     * implement 3-way-many to many relationship (within ORM)
+     */
+    public static function get_players($file_name, $string = NULL, $delete = FALSE)
+    {
+        if (!self::valid_replay($file_name, $string))
+        {
+            return FALSE;
+        }    
+        
+        if (!is_null($string))
+        {
+            $tmp = tempnam('.', 'RGM');
+            file_put_contents($tmp, $string);
+            return self::get_players($tmp, NULL, TRUE);
+        }
+        
+        $archive_name = realpath($file_name);
+        
+        $matches        = array();
+        $replay_details = self::readfile($file_name, 'replay.details');
+        $replay_details = str_replace(array("\r\n"), array("\100"), $replay_details); // for now
+        
+        preg_match_all("/\002.(\w*?)\002\005.*?(Zerg|Terran|Protoss)\006/i", $replay_details, $matches);
+
+        if ($delete)
+            @unlink($file_name);
+
+        $c = min(count($matches[1]), count($matches[2]));
+        $r = array();
+        
+        for ($i = 0; $i < $c; $i++)
+        {
+            $r[] = array($matches[1][$i], $matches[2][$i]);
+        }
+
+        return $r;
+    }
+    
+    public static function get_map($file_name, $string = NULL, $delete = FALSE)
+    {
+        if (!self::valid_replay($file_name, $string))
+        {
+            return FALSE;
+        }    
+        
+        if (!is_null($string))
+        {
+            $tmp = tempnam('.', 'RGM');
+            file_put_contents($tmp, $string);
+            return self::get_map($tmp, NULL, TRUE);
+        }
+        
+        $archive_name = realpath($file_name);
+        
+        $matches        = array();
+        $replay_details = self::readfile($file_name, 'replay.details');
+        
+        preg_match("/\002{2}.(\w.*?)\004/i", $replay_details, $matches);
+        
+        if ($delete)
+            @unlink($file_name);
+        
+        if (isset($matches[1]))
+            return $matches[1];
+            
+        return FALSE;
+    }
     /**
      * Is a specified replay (file/string) valid?
      * @param string $file_name Replay file to check
@@ -33,9 +107,9 @@ class Kohana_Starparse {
     {
         if (!is_null($string))
         {
-            $tmpname = tempnam('.', 'RTP');
-            file_put_contents($tmpname, $string);
-            return self::valid_replay($tmpname, NULL, TRUE);
+            $tmp = tempnam('.', 'RTP');
+            file_put_contents($tmp, $string);
+            return self::valid_replay($tmp, NULL, TRUE);
         }
         
 

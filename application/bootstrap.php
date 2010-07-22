@@ -77,6 +77,7 @@ Kohana::modules(array(
 	   'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
 	// 'pagination' => MODPATH.'pagination', // Paging of results
+	   'prettylink' => MODPATH.'prettylink',
 	   'starparse'  => MODPATH.'starparse',
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	));

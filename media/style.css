@@ -19,38 +19,6 @@ body {
 	background-color: #DAD7E0;
 }
 
-div.upload2l {
-	float: left;
-	width: 400px;
-}
-
-div.upload2r {
-	float: right;
-	width: 20px;
-}
-
-div.upload2 {
-	height: 20px;
-	padding: 5px;
-	border-bottom: 1px solid #000000;
-
-}
-
-.stripe1 {
-	background-color: #D4F7CB;
-}
-
-.stripe2 {
-	background-color: #F2B8BC;
-}
-
-div#upload2_box {
-	width: 450px;
-	margin-left: 100px;
-	border: 1px solid #000000;
-	border-bottom: 0px;
-}
-
 a:link {
 	text-decoration: underline;
 	color: black;
@@ -69,4 +37,78 @@ a:active {
 a:hover {
 	text-decoration: underline; 
 	color: red;
+}
+
+div.replay_upload2l {
+	float: left;
+	width: 400px;
+}
+
+div.replay_upload2r {
+	float: right;
+	width: 20px;
+}
+
+div.replay_viewl {
+	float: left;
+	width: 145px;
+}
+
+div.replay_viewr {
+	float: right;
+	width: 55px;
+}
+
+div.replay_row {
+	height: 20px;
+	padding: 5px;
+	border-bottom: 1px solid #000000;
+}
+
+.green {
+	background-color: #D4F7CB;
+}
+
+.red {
+	background-color: #F2B8BC;
+}
+
+.stripe1 {
+	background-color: #D8E0D7;
+}
+
+.stripe2 {
+	background-color: #C9BDCC;
+}
+
+div#replay_upload2_box {
+	width: 450px;
+	margin-left: 100px;
+	border: 1px solid #000000;
+	border-bottom: 0px;
+}
+
+div#replay_view_box {
+	width: 220px;
+	border: 1px solid #000000;
+	border-bottom: 0px;
+}
+
+/*
+view player
+*/
+div.player_viewl {
+	float: left;
+	width: 345px;
+}
+
+div.player_viewr {
+	float: right;
+	width: 55px;
+}
+
+div#player_view_box {
+	width: 420px;
+	border: 1px solid #000000;
+	border-bottom: 0px;
 }

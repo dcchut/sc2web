@@ -1,7 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Replay extends Controller_Site {
-    
     /**
      *  Form allowing a user to upload a replay to the repository
      */
@@ -98,26 +97,21 @@ class Controller_Replay extends Controller_Site {
         $this->request->send_file(TRUE, $replay->filename);
     }
     
-    public function _view_text($id)
-    {
-        if (!Model_Replay::exists($id))
-            return 'falcon_punch';
-            
-       // get the upload filename of the replay, for now
-       return pathinfo(ORM::factory('replay', $id)->filename, PATHINFO_FILENAME);
-            
-    }
+    /**
+     * Display a replay with some details about it
+     * @param integer $id
+     * @return string
+     */
     public function action_view($id)
     {
         if (!Model_Replay::exists($id))
             return ($this->template->main = 'an error occured');
-            
+        
         // get details about this replay
         $replay = ORM::factory('replay', $id);
         
         $this->subtitle       = 'viewing replay - ' . htmlentities(pathinfo($replay->filename, PATHINFO_FILENAME));
-        $this->template->main = View::factory('replay/view', array('replay'    => $replay,
-                                                                   'view_url'  => $this->view_uri($replay->id),
-                                                                   'view_text' => $this->_view_text($replay->id),));
+        $this->template->main = View::factory('replay/view', array('replay'    => $replay->as_array(),
+                                                                   'players'   => $replay->players(),));
     }
 }

@@ -1,6 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Replay extends ORM {
+    protected $_has_many = array('players' => array('model'   => 'player',
+                                                    'through' => 'players_replays'),
+                                 'races'   => array('model'   => 'race',
+                                                    'through' => 'players_replays'));
+    
+    protected $_has_one  = array('maps' => array());
     
     /**
      * @var string Local location to store replays
@@ -19,7 +25,7 @@ class Model_Replay extends ORM {
 
     protected function cache_id()
     {
-        return 'file_replay_' . $this->pk();
+        return 'file/replay/' . $this->pk();
     }
     
     /**
@@ -75,6 +81,8 @@ class Model_Replay extends ORM {
         {
             $hash     = sha1($string);
             $filename = substr($file, 0, 200);
+            $map      = Model_Map::get_map_id(Starparse::get_map(FALSE, $string));
+            $players  = Starparse::get_players(FALSE, $string);
         }
         else
         {
@@ -84,6 +92,8 @@ class Model_Replay extends ORM {
 
             $hash     = sha1_file($file['tmp_name']);
             $filename = substr($file['name'], 0, 200);
+            $map      = Model_Map::get_map_id(Starparse::get_map($file['tmp_name']));
+            $players  = Starparse::get_players($file['tmp_name']);
         }
 
         // check if this replay is already in the database
@@ -96,11 +106,27 @@ class Model_Replay extends ORM {
         $this->upload_date = time();
         $this->user_id     = 1;
         $this->downloaded  = 0;
+        $this->map_id      = $map;
+        
         $this->hash        = $hash;
         
         if (!$this->save())
             return FALSE;
             
+        /* 
+         * Add the appropriate records to the through table for each player (cannot be done through ORM, unfortunately)
+         */
+        foreach ($players as $player)
+        {
+            $columns = array('replay_id', 'player_id', 'race_id');
+            $values  = array($this->pk(), Model_Player::get_player_id($player[0]), Model_Race::get_race_id($player[1]));
+            
+            DB::insert('players_replays')
+                ->columns($columns)
+                ->values($values)
+                ->execute($this->_db);
+        }
+        
         if (!is_null($string))
         {
             // save the string to a file
@@ -115,4 +141,32 @@ class Model_Replay extends ORM {
         
         return $this;
     }
+    
+    public function players()
+    {
+        // our resultant players list
+        $players = array();
+        
+        // get all of the appropriate details (name & race)
+        $result = DB::select('player_id', 'race_id')
+                    ->from('players_replays')
+                    ->where('replay_id', '=', $this->id)
+                    ->execute($this->_db);
+                    
+        foreach ($result as $through)
+        {   
+            $player = ORM::factory('player', $through['player_id']);
+            $race   = ORM::factory('race', $through['race_id']);
+            
+            $return = new stdClass;
+            $return->player = $player;
+            $return->race   = $race;
+            
+            $players[] = $return;
+        }
+        
+        return $players;
+    }
+
+
 }

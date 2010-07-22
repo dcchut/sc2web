@@ -8,6 +8,7 @@ class ORM extends Kohana_ORM {
      */
     public static function exists($id)
     {
+        // 
         $class = get_called_class();
         $inst  = new $class();
         
