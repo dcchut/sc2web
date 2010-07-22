@@ -2,15 +2,29 @@
 
 class Controller_Replay extends Controller_Site {
     
+    /**
+     *  Form allowing a user to upload a replay to the repository
+     */
     public function action_upload()
     {
+        $this->subtitle = 'upload a replay';
+
         $replay = ORM::factory('replay');
         
         $this->template->main = View::factory('replay/upload');
     }
     
+    /**
+     * Handle the technical details of uploading a replay
+     */
     public function action_upload2()
     {
+        $this->subtitle = 'replay(s) uploaded';
+        $this->template->main .= View::factory('replay/upload2/header');
+        
+        /*
+         * Has the file been submitted correctly?
+         */
         $files = Validate::factory($_FILES);
         $files->rule('file', 'Upload::not_empty');
         
@@ -19,14 +33,10 @@ class Controller_Replay extends Controller_Site {
             $this->request->redirect('replay/upload');
         }
         
-        // set the upload2 header up
-        $this->template->main .= View::factory('replay/upload2/header');
-        
-        
-        // is this a zip archive?
-        $zip = Archive::factory('zip')->open(Arr::get($_FILES['file'], 'name', FALSE));
-        
-        if ($zip)
+        /*
+         * Are we uploading a MASS of ZIP files?
+         */
+        if ($zip = Archive::factory('zip')->open(Arr::get($_FILES['file'], 'name', FALSE)))
         {
             foreach ($zip->file_list() as $zfile)
             {
@@ -46,30 +56,35 @@ class Controller_Replay extends Controller_Site {
         }
         else
         {
-            if (!($replay = ORM::factory('replay')->store($_FILES['file'])))
+            /*
+             * Just a single replay upload - validation it as per normal
+             */
+            $id = FALSE;
+            
+            // is this a valid replay?
+            if ($valid = Starparse::valid_replay($_FILES['file']['tmp_name']))
             {
-                // an error occured with the upload, let the user know
-                $this->template->main .= 'an error occured';
+                $id = ORM::factory('replay')->store($_FILES['file']);
             }
-            else
-            {
-                // download the now uploaded file
-                $this->request->response = $replay->download();
-                $this->request->send_file(TRUE, $replay->filename);
-            }
+            
+            $this->template->main .= View::factory('replay/upload2', array('success' => $valid,
+                                                                           'id'      => $id,
+                                                                           'replay'  => $_FILES['file']['name']));
         }
         
         $this->template->main .= View::factory('replay/upload2/footer');
     }
     
+    /**
+     * Download a replay (throws the replay at the user)
+     * @param integer $id replay ID
+     * @return void
+     */
     public function action_download($id)
     {
         // does the replay even exist?
         if (!Model_Replay::exists($id))
-        {
-            $this->template->main = 'an error occured';
-            return;
-        }
+            return ($this->template->main = 'an error occured');
        
         // send the response to the browser
         $replay = ORM::factory('replay', $id);
@@ -81,5 +96,28 @@ class Controller_Replay extends Controller_Site {
         }
         
         $this->request->send_file(TRUE, $replay->filename);
+    }
+    
+    public function _view_text($id)
+    {
+        if (!Model_Replay::exists($id))
+            return 'falcon_punch';
+            
+       // get the upload filename of the replay, for now
+       return pathinfo(ORM::factory('replay', $id)->filename, PATHINFO_FILENAME);
+            
+    }
+    public function action_view($id)
+    {
+        if (!Model_Replay::exists($id))
+            return ($this->template->main = 'an error occured');
+            
+        // get details about this replay
+        $replay = ORM::factory('replay', $id);
+        
+        $this->subtitle       = 'viewing replay - ' . htmlentities(pathinfo($replay->filename, PATHINFO_FILENAME));
+        $this->template->main = View::factory('replay/view', array('replay'    => $replay,
+                                                                   'view_url'  => $this->view_uri($replay->id),
+                                                                   'view_text' => $this->_view_text($replay->id),));
     }
 }

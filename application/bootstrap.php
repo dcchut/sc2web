@@ -51,6 +51,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  */
 Kohana::init(array(
 	'base_url'   => '/sc2/',
+    'index_file' => '',
 ));
 
 /**
@@ -78,13 +79,20 @@ Kohana::modules(array(
 	// 'pagination' => MODPATH.'pagination', // Paging of results
 	   'starparse'  => MODPATH.'starparse',
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
 	));
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
+	
+// allow 'nice' view URLs
+Route::set('generalview', '<controller>/view/<id>(/<all>)', array('all' => '.*'))
+    ->defaults(array(
+        'action'     => 'view',
+    ));
+
+// default route
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'replay',

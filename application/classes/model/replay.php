@@ -82,8 +82,8 @@ class Model_Replay extends ORM {
             if (!Upload::valid($file))
                 return FALSE;
 
-            $hash     = sha1_file(Arr::get($file, 'tmp_name', NULL));
-            $filename = substr(Arr::get($file, 'name', uniqid()), 0, 200);
+            $hash     = sha1_file($file['tmp_name']);
+            $filename = substr($file['name'], 0, 200);
         }
 
         // check if this replay is already in the database
