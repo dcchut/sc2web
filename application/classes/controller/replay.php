@@ -34,8 +34,8 @@ class Controller_Replay extends Controller_Site {
         
         /*
          * Are we uploading a MASS of ZIP files?
-         */
-        if ($zip = Archive::factory('zip')->open(Arr::get($_FILES['file'], 'name', FALSE)))
+		 */
+        if ($zip = Archive::factory('zip')->open($_FILES['file']['tmp_name']))
         {
             foreach ($zip->file_list() as $zfile)
             {
@@ -49,8 +49,8 @@ class Controller_Replay extends Controller_Site {
                 }
                 
                 $this->template->main .= View::factory('replay/upload2', array('success' => $valid,
-                                                                               'id'      => $id,
-                                                                               'replay'  => $zfile,));
+                                                                               'id'      => (int)$id,
+                                                                               'replay'  => Text::limit_chars($zfile, 50)));
             }
         }
         else
@@ -67,8 +67,8 @@ class Controller_Replay extends Controller_Site {
             }
             
             $this->template->main .= View::factory('replay/upload2', array('success' => $valid,
-                                                                           'id'      => $id,
-                                                                           'replay'  => $_FILES['file']['name']));
+                                                                           'id'      => (int)$id,
+                                                                           'replay'  => htmlentities($_FILES['file']['name'])));
         }
         
         $this->template->main .= View::factory('replay/upload2/footer');
@@ -110,7 +110,7 @@ class Controller_Replay extends Controller_Site {
         // get details about this replay
         $replay = ORM::factory('replay', $id);
         
-        $this->subtitle       = 'viewing replay - ' . htmlentities(pathinfo($replay->filename, PATHINFO_FILENAME));
+        $this->subtitle       = 'viewing replay: ' . htmlentities(pathinfo($replay->filename, PATHINFO_FILENAME));
         $this->template->main = View::factory('replay/view', array('replay'    => $replay->as_array(),
                                                                    'players'   => $replay->players(),));
     }

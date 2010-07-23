@@ -39,16 +39,6 @@ a:hover {
 	color: red;
 }
 
-div.replay_upload2l {
-	float: left;
-	width: 400px;
-}
-
-div.replay_upload2r {
-	float: right;
-	width: 20px;
-}
-
 div.replay_viewl {
 	float: left;
 	width: 145px;
@@ -59,11 +49,6 @@ div.replay_viewr {
 	width: 55px;
 }
 
-div.replay_row {
-	height: 20px;
-	padding: 5px;
-	border-bottom: 1px solid #000000;
-}
 
 .green {
 	background-color: #D4F7CB;
@@ -81,9 +66,22 @@ div.replay_row {
 	background-color: #C9BDCC;
 }
 
-div#replay_upload2_box {
+
+/*
+view player
+*/
+div.player_viewl {
+	float: left;
 	width: 450px;
-	margin-left: 100px;
+}
+
+div.player_viewr {
+	float: right;
+	width: 55px;
+}
+
+div#player_view_box {
+	width: 555px;
 	border: 1px solid #000000;
 	border-bottom: 0px;
 }
@@ -94,21 +92,28 @@ div#replay_view_box {
 	border-bottom: 0px;
 }
 
+div.replay_row {
+	height: 20px;
+	padding: 5px;
+	border-bottom: 1px solid #000000;
+}
+
 /*
-view player
+upload 2
 */
-div.player_viewl {
-	float: left;
-	width: 345px;
-}
-
-div.player_viewr {
-	float: right;
-	width: 55px;
-}
-
-div#player_view_box {
-	width: 420px;
+div#replay_upload2_box {
+	width: 525px;
+	margin-left: 100px;
 	border: 1px solid #000000;
 	border-bottom: 0px;
+}
+
+div.replay_upload2l {
+	float: left;
+	width: 480px;
+}
+
+div.replay_upload2r {
+	float: right;
+	width: 20px;
 }

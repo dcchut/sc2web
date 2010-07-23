@@ -39,11 +39,9 @@ $(document).ready(function(){
 // move this to a site.js file at some time in the future, to keep everything nice and clean
 </script>
 <div id="main">
-<h3>nitrated</h3>
-<?php echo $main; ?><br />
-
-created by dcc.
+<?php echo HTML::anchor('', '<h3>nitrated</h3>'); ?>
+<?php echo $main; ?><br /><br />
+created by <?php echo HTML::anchor('player/view/54/dcc', 'dcc'); ?> in <?php echo $exec; ?> seconds.
 </div>
 </body>
-</html>/body>
 </html>

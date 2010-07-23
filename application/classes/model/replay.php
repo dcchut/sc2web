@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Replay extends ORM {
+    
     protected $_has_many = array('players' => array('model'   => 'player',
                                                     'through' => 'players_replays'),
                                  'races'   => array('model'   => 'race',
@@ -22,11 +23,6 @@ class Model_Replay extends ORM {
     {
         return realpath($this->replay_dir) . DIRECTORY_SEPARATOR . $this->local_filename();
     }
-
-    protected function cache_id()
-    {
-        return 'file/replay/' . $this->pk();
-    }
     
     /**
      * Download the replay
@@ -42,9 +38,10 @@ class Model_Replay extends ORM {
         $this->save();
 
         // perhaps in future implement some sort of file-cache in-memory?
-        $cache = Cache::instance('xcache');
+        $cache     = Cache::instance('xcache');
+        $cache_key = 'model/replay/' . $this->pk() . '/download';
         
-        if ($data = $cache->get($this->cache_id(), FALSE))
+        if ($data = $cache->get($cache_key, FALSE))
             return $data;
         
         // now we cache the file, if it still exists(?)
@@ -57,17 +54,13 @@ class Model_Replay extends ORM {
             return FALSE;
         }
         
+
+        $dl = file_get_contents($filename);
+        
         // cache the file
-        $fdata = file_get_contents($filename);
+        $cache->set($cache_key, $dl);
         
-        if (!$cache->set($this->cache_id(), $fdata))
-        {
-            Kohana_Log::instance()->add('ERROR', 
-            							'Could not cache replay (:replay)', 
-                                        array(':replay' => $this->pk(),));
-        }
-        
-        return $fdata;
+        return $dl;
     }
     
     /**
@@ -142,19 +135,36 @@ class Model_Replay extends ORM {
         return $this;
     }
     
-    public function players()
+    protected function players_cache_id()
+    {
+        return $this->cache_id() . '/players';
+    }
+    
+    public function players($ignore = FALSE)
     {
         // our resultant players list
-        $players = array();
+        $cache     = Cache::instance('xcache');
+        $cache_key = 'model/replay/' . $this->pk() . '/players';
         
-        // get all of the appropriate details (name & race)
-        $result = DB::select('player_id', 'race_id')
-                    ->from('players_replays')
-                    ->where('replay_id', '=', $this->id)
-                    ->execute($this->_db);
-                    
+        if (!($result = $cache->get($cache_key, FALSE)))
+        {
+            // get all of the appropriate details (name & race)
+            $result = DB::select('player_id', 'race_id')
+                        ->from('players_replays')
+                        ->where('replay_id', '=', $this->id)
+                        ->execute($this->_db);
+
+            $cache->set($cache_key, serialize($result));
+        }
+        else
+            $result = unserialize($result);
+        
+        
         foreach ($result as $through)
         {   
+            if ($through['player_id'] == $ignore)
+                continue;
+                
             $player = ORM::factory('player', $through['player_id']);
             $race   = ORM::factory('race', $through['race_id']);
             
@@ -165,8 +175,31 @@ class Model_Replay extends ORM {
             $players[] = $return;
         }
         
+
         return $players;
     }
+    
+    public function opponents($player_id)
+    {
+           // get the opponents of this replay
+           $opponents      = $this->players($player_id);
+          
+           $opponents_text = '';
+           $opponents_c    = count($opponents);
+           
+           $i = 0;
+           
+           foreach ($opponents as $r)
+           {
+               $opponents_text .= $r->player->name;
+               $opponents_text .= ($i == $opponents_c - 2) ? ' and ' : ', ';
+               
+               $i++;
+           }
 
+           $opponents_text = substr($opponents_text, 0, -2);
 
+           return $opponents_text;
+    }
 }
+

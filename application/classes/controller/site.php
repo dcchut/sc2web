@@ -24,6 +24,14 @@ class Controller_Site extends Controller_Template {
     {
         $this->template->title = $this->title . $this->subtitle;
         
+        $p = Profiler::application();
+        $this->template->exec  = round($p['current']['time'], 3);
+        
         return parent::after();
     }
-} // End Site
+    
+    public function action_index()
+    {
+        $this->template->main = View::factory('site/index');
+    }
+}

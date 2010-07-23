@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.'); ?>
 
-<b>Upload replay(s):</b><br />
+<p>Upload a replay (or a zip archive containing many replays):</p>
 <?php echo Form::open('replay/upload2', array('enctype' => 'multipart/form-data')); ?>
 <?php echo Form::file('file'); ?><br /><br />
 <?php echo Form::submit('submit', 'Upload'); ?>

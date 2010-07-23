@@ -96,8 +96,8 @@ Route::set('generalview', '<controller>/view/<id>(/<all>)', array('all' => '.*')
 // default route
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
-		'controller' => 'replay',
-		'action'     => 'upload',
+		'controller' => 'site',
+		'action'     => 'index',
 	));
 
 if ( ! defined('SUPPRESS_REQUEST'))
