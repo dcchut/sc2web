@@ -1,6 +1,16 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Kohana_Starparse {
+    /**
+     * Get the temp directory to store files
+     * @return Ambigous <string, Kohana_Config>
+     */
+    protected static function _tmp_dir()
+    {
+        $starparse = Kohana::config('starparse');
+        
+        return isset($starparse['tmp_dir']) ? $starparse['tmp_dir'] : '.';
+    }
     
     /**
      * Use the readfile command to read a given file within a MPQ archive
@@ -41,7 +51,7 @@ class Kohana_Starparse {
         
         if (!is_null($string))
         {
-            $tmp = tempnam('.', 'RGM');
+            $tmp = tempnam(self::_tmp_dir(), 'TMP');
             file_put_contents($tmp, $string);
             return self::get_players($tmp, NULL, TRUE);
         }
@@ -77,7 +87,7 @@ class Kohana_Starparse {
         
         if (!is_null($string))
         {
-            $tmp = tempnam('.', 'RGM');
+            $tmp = tempnam(self::_tmp_dir(), 'TMP');
             file_put_contents($tmp, $string);
             return self::get_map($tmp, NULL, TRUE);
         }
@@ -107,7 +117,7 @@ class Kohana_Starparse {
     {
         if (!is_null($string))
         {
-            $tmp = tempnam('.', 'RTP');
+            $tmp = tempnam(self::_tmp_dir(), 'TMP');
             file_put_contents($tmp, $string);
             return self::valid_replay($tmp, NULL, TRUE);
         }
