@@ -61,7 +61,7 @@ class Controller_Replay extends Controller_Site {
             $id = FALSE;
             
             // is this a valid replay?
-            if ($valid = Starparse::valid_replay($_FILES['file']['tmp_name']))
+            if ($valid = Starparse::valid_replay($_FILES['file']['tmp_name'], FALSE, $_FILES['file']['name']))
             {
                 $id = ORM::factory('replay')->store($_FILES['file']);
             }
