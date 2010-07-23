@@ -2,12 +2,12 @@
 
 class Model_Replay extends ORM {
     
-    protected $_has_many = array('players' => array('model'   => 'player',
-                                                    'through' => 'players_replays'),
-                                 'races'   => array('model'   => 'race',
-                                                    'through' => 'players_replays'));
+    protected $_has_many    = array('players' => array('model'   => 'player',
+                                                       'through' => 'players_replays'),
+                                 	'races'      => array('model'   => 'race',
+                                                       'through' => 'players_replays'));
     
-    protected $_has_one  = array('maps' => array());
+    protected $_belongs_to   = array('map' => array());
     
     protected $replay_dir;
 
@@ -41,14 +41,14 @@ class Model_Replay extends ORM {
         // increment the download counter
         $this->downloaded++;
         $this->save();
-
+        
         // perhaps in future implement some sort of file-cache in-memory?
         $cache     = Cache::instance('xcache');
         $cache_key = 'model/replay/' . $this->pk() . '/download';
         
         if ($data = $cache->get($cache_key, FALSE))
             return $data;
-        
+
         // now we cache the file, if it still exists(?)
         if (!file_exists($filename))
         {
@@ -185,7 +185,7 @@ class Model_Replay extends ORM {
         return $players;
     }
     
-    public function opponents($player_id)
+    public function opponents_text($player_id)
     {
            // get the opponents of this replay
            $opponents      = $this->players($player_id);
@@ -206,6 +206,15 @@ class Model_Replay extends ORM {
            $opponents_text = substr($opponents_text, 0, -2);
 
            return $opponents_text;
+    }
+    
+    /**
+     * Some text to describe the replay
+     * @return string
+     */
+    public function title()
+    {
+        return $this->map->name;
     }
 }
 

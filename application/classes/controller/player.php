@@ -10,15 +10,16 @@ class Controller_Player extends Controller_Site {
        $player = ORM::factory('player', $id);
        $this->subtitle       = 'viewing ' . htmlentities($player->name) .'\'s profile';
        
-       $this->template->main = View::factory('player/view/header', array('player' => $player->as_array()));
+       $this->template->main = View::factory('player/view/header', array('player'     => $player->as_array(),
+                                                                         'downloaded' => $player->downloaded(),));
        
        foreach ($player->replays->find_all() as $replay)
        {
            $this->template->main .= View::factory('player/view', array('race'  		 => htmlentities(Model_Race::get_match_race($player->id,
                                                                                                               $replay->id)->name),
                                                                        'replay_uri'  => Prettylink::uri('replay', $replay->id),
-                                                                       'replay_text' => htmlentities(Prettylink_Replay::text($replay->id)),
-                                                                       'opponents'   => htmlentities($replay->opponents($player->id)),));
+                                                                       'replay_text' => htmlentities($replay->title()),
+                                                                       'opponents'   => htmlentities($replay->opponents_text($player->id)),));
        }
                                                             
        $this->template->main .= View::factory('player/view/footer');

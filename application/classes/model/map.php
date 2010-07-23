@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Map extends ORM {
-    protected $_belongs_to = array('replay' => array());
+    protected $_has_one = array('replay' => array());
     
     public static function get_map_id($name)
     {

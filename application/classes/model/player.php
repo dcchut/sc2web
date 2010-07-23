@@ -29,4 +29,30 @@ class Model_Player extends ORM {
         
         return $player_id;
     }
+    
+    /**
+     * How many times has this player been downloaded?
+     */
+    public function downloaded()
+    {
+        // cache this to avoid doing this OVER and OVER and OVER again
+        $cache     = Cache::instance('xcache');
+        $cache_key = 'model/player/' . $this->pk() . '/downloaded';
+        
+        if (!($sum = $cache->get($cache_key, FALSE)))
+        {
+            $sum = 0;
+            
+            foreach ($this->replays->find_all() as $replay)
+            {
+                $sum += $replay->downloaded;
+            }
+
+            // lets not set this cache for too long, downloadeds happen quickly, eh!
+            $cache->set($cache_key, $sum, 60);
+        }
+
+        // just to be sure, cast to an int
+        return (int)$sum;
+    }
 }
