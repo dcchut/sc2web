@@ -27,9 +27,17 @@ class Kohana_Starparse {
     protected static function readfile($archive_name, $internal_file_name)
     {
         // what exec command are we using?
-        $exec = Kohana::config('starparse');
-        $exec = isset($exec['readfile']) ? $exec['readfile'] : 'readfile';
+        $config = Kohana::config('starparse');
         
+        // are we using the dodgy cgi key?
+        if (isset($config['cgi_key']))
+        {
+            return trim(file_get_contents($config['cgi_key'] . '&replay=' . urlencode($archive_name) . '&internal=' . urlencode($internal_file_name)));
+            
+        }
+        
+        // otherwise do it through the shell
+        $exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
         $cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
 
         // catch the output of this command
