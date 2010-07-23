@@ -6,6 +6,6 @@ class Prettylink_Replay extends Prettylink {
        if (!Model_Replay::exists($id))
            return 'falcon_punch';
         
-       return pathinfo(ORM::factory('replay', $id)->filename, PATHINFO_FILENAME);
+       return ORM::factory('replay', $id)->title();
     }
 }
