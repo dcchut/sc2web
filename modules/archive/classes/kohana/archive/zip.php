@@ -28,6 +28,17 @@ class Kohana_Archive_Zip {
 	    if (!class_exists('ZipArchive'))
 	        return FALSE;
 	      
+        // Is it REALLY a zip file?
+        if (!$create) 
+        {
+            if (($mime = File::mime($file_name)) !== FALSE)
+            {    
+                var_dump($mime);
+                exit();
+            }
+        }
+	        
+	        
 	    // are we creating an archive or opening an existing one?
 	    $flags = ($create) ? ZIPARCHIVE::CREATE : ZIPARCHIVE::CHECKCONS;
 
