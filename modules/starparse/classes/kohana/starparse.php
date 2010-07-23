@@ -36,7 +36,7 @@ class Kohana_Starparse {
         ob_start(); {
             passthru($cmd);
         } $ret = ob_get_clean();
-        
+
         if ($ret === 'error')
             return FALSE;
        
