@@ -3,7 +3,4 @@
 /parser/*
 *.zip
 sc2.db3
-/upload/*
 /media/icons/*
-/application/logs/
-/application/cache/*
