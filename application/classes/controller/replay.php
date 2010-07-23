@@ -114,7 +114,4 @@ class Controller_Replay extends Controller_Site {
         $this->template->main = View::factory('replay/view', array('replay'    => $replay->as_array(),
                                                                    'players'   => $replay->players(),));
     }
-}->players(),));
-    }
-}   }
 }
