@@ -5,11 +5,14 @@ class Kohana_Starparse {
      * Get the temp directory to store files
      * @return Ambigous <string, Kohana_Config>
      */
-    protected static function _tmp_dir()
+    protected static function _tmp_file()
     {
         $starparse = Kohana::config('starparse');
         
-        return isset($starparse['tmp_dir']) ? realpath($starparse['tmp_dir']) : sys_get_temp_dir();
+        $tmp_dir = isset($starparse['tmp_dir']) ? $starparse['tmp_dir'] : sys_get_temp_dir();
+        $tmp_dir = realpath($tmp_dir);
+        
+        return $tmp_dir . DIRECTORY_SEPARATOR . uniqid() . '.tmp';
     }
     
     /**
@@ -34,12 +37,6 @@ class Kohana_Starparse {
     }
     
     /*
-     * 	preg_match_all(, $replay_details, $matches);
-	var_dump($matches[1]);
-	var_dump($matches[2]);
-     */
-    
-    /*
      * implement 3-way-many to many relationship (within ORM)
      */
     public static function get_players($file_name, $string = NULL, $delete = FALSE)
@@ -51,11 +48,10 @@ class Kohana_Starparse {
         
         if (!is_null($string))
         {
-            $tmp = tempnam(self::_tmp_dir(), 'TMP');
-            
-            file_put_contents($tmp, $string);
-            
-            return self::get_players($tmp, NULL, TRUE);
+            // create a temporary file
+            $temp_file_name = self::_tmp_file();
+            file_put_contents($temp_file_name, $string);
+            return self::get_players($temp_file_name, NULL, TRUE);
         }
         
         $archive_name = realpath($file_name);
@@ -89,9 +85,9 @@ class Kohana_Starparse {
         
         if (!is_null($string))
         {
-            $tmp = tempnam(self::_tmp_dir(), 'TMP');
-            file_put_contents($tmp, $string);
-            return self::get_map($tmp, NULL, TRUE);
+            $temp_file_name = self::_tmp_file();
+            file_put_contents($temp_file_name, $string);
+            return self::get_map($temp_file_name, NULL, TRUE);
         }
         
         $archive_name = realpath($file_name);
@@ -119,9 +115,9 @@ class Kohana_Starparse {
     {
         if (!is_null($string))
         {
-            $tmp = tempnam(self::_tmp_dir(), 'TMP');
-            file_put_contents($tmp, $string);
-            return self::valid_replay($tmp, NULL, TRUE);
+            $temp_file_name = self::_tmp_file();
+            file_put_contents($temp_file_name, $string);
+            return self::valid_replay($temp_file_name, NULL, TRUE);
         }
 
         // we must have a file name here, then
