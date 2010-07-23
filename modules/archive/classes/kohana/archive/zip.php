@@ -42,7 +42,7 @@ class Kohana_Archive_Zip {
                 return FALSE;
                 
             // what extension is the submitted file?
-            if (!$real_file_name)
+            if ($real_file_name !== FALSE)
             {
                 $extension = strtolower(pathinfo($real_file_name, PATHINFO_EXTENSION));
                 

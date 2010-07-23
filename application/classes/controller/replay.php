@@ -61,7 +61,7 @@ class Controller_Replay extends Controller_Site {
             $id = FALSE;
             
             // is this a valid replay?
-            if ($valid = Starparse::valid_replay($_FILES['file']['tmp_name'], FALSE, $_FILES['file']['name']))
+            if ($valid = Starparse::valid_replay($_FILES['file']['tmp_name']))
             {
                 $id = ORM::factory('replay')->store($_FILES['file']);
             }
@@ -114,4 +114,7 @@ class Controller_Replay extends Controller_Site {
         $this->template->main = View::factory('replay/view', array('replay'    => $replay->as_array(),
                                                                    'players'   => $replay->players(),));
     }
+}->players(),));
+    }
+}   }
 }
