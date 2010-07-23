@@ -164,6 +164,7 @@ class Model_Replay extends ORM {
         else
             $result = unserialize($result);
         
+        $players = array();
         
         foreach ($result as $through)
         {   
