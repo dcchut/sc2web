@@ -16,7 +16,7 @@ class Kohana_Archive_Zip {
 	 * @param unknown_type $create
 	 * @return Kohana_Archive_Zip
 	 */
-	public function open($file_name, $create = FALSE)
+	public function open($file_name, $create = FALSE, $real_file_name = FALSE)
 	{
 	    $file_name = realpath($file_name);
 	    
@@ -31,10 +31,31 @@ class Kohana_Archive_Zip {
         // Is it REALLY a zip file?
         if (!$create) 
         {
-            if (($mime = File::mime($file_name)) !== FALSE)
-            {    
-                var_dump($mime);
-                exit();
+    		// Load all of the mime types
+            $mimes     = Kohana::config('mimes');
+            
+            // what are the zip MIME types?
+            $zip_mimes = isset($mimes['zip']) ? $mimes['zip'] : array('application/zip');
+            
+            // can we get the mime type from the file itself?
+            if (($mime = File::mime($file_name)) !== FALSE && !in_array($mime, $zip_mimes))
+                return FALSE;
+                
+            // what extension is the submitted file?
+            if (!$real_file_name)
+            {
+                $extension = strtolower(pathinfo($real_file_name, PATHINFO_EXTENSION));
+                
+                if (($mime = File::mime_by_ext($extension)) !== FALSE)
+                {
+                    if (!in_array($mime, $zip_mimes))
+                        return FALSE;
+                }
+                else
+                {
+                    // what the fuck is this file?
+                    return FALSE;
+                }
             }
         }
 	        
