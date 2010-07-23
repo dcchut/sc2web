@@ -3,5 +3,5 @@
 return array
 (
     'tmp_dir'  => '.',
-    'readfile' => 'readfile',// the current directory
+    'readfile' => 'readfile', // the current directory
 );

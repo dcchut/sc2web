@@ -27,30 +27,15 @@ class Kohana_Starparse {
         // what exec command are we using?
         $config = Kohana::config('starparse');
         
-        // are we using the dodgy cgi key?
-        if (isset($config['cgi_key']))
-        {
-            $url = $config['cgi_key'] . '&replay=' . $archive_name . '&internal=' . $internal_file_name;
+		// we do it through the shell.  fuck you, CGI.
+		$exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
+		$cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
 
-            if (isset($config['cgi_replace'])) 
-            {
-                $url = str_replace($config['cgi_replace'][0], $config['cgi_replace'][1], $url);
-            }
+		// catch the output of this command
+		ob_start(); {
+			passthru($cmd);
+		} $ret = trim(ob_get_clean());
             
-            $ret = trim(@file_get_contents($url));
-        }
-        else 
-        {
-            // otherwise do it through the shell
-            $exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
-            $cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
-    
-            // catch the output of this command
-            ob_start(); {
-                passthru($cmd);
-            } $ret = trim(ob_get_clean());
-        }
-
         if ($ret === 'error')
             return FALSE;
        
