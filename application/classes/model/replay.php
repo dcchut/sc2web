@@ -9,10 +9,14 @@ class Model_Replay extends ORM {
     
     protected $_has_one  = array('maps' => array());
     
-    /**
-     * @var string Local location to store replays
-     */
-    protected $replay_dir = 'upload\replays';
+    protected $replay_dir;
+
+    public function __construct($id = NULL)
+    {
+        $this->replay_dir = $_SERVER['DOCUMENT_ROOT'] . 'upload/replays';
+        
+        return parent::__construct($id);
+    }
     
     protected function local_filename()
     {
