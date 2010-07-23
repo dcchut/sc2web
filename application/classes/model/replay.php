@@ -13,7 +13,8 @@ class Model_Replay extends ORM {
 
     public function __construct($id = NULL)
     {
-        $this->replay_dir = $_SERVER['DOCUMENT_ROOT'] . 'upload/replays';
+		$config 		  = Kohana::config('replay');
+        $this->replay_dir = $config['upload_dir'];
         
         return parent::__construct($id);
     }
