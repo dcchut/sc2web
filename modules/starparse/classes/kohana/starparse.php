@@ -32,7 +32,7 @@ class Kohana_Starparse {
         // are we using the dodgy cgi key?
         if (isset($config['cgi_key']))
         {
-            return trim(file_get_contents($config['cgi_key'] . '&replay=' . urlencode($archive_name) . '&internal=' . urlencode($internal_file_name)));
+            return trim(@file_get_contents($config['cgi_key'] . '&replay=' . urlencode($archive_name) . '&internal=' . urlencode($internal_file_name)));
             
         }
         
