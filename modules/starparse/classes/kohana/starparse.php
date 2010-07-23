@@ -16,8 +16,6 @@ class Kohana_Starparse {
         return $tmp_dir . DIRECTORY_SEPARATOR . uniqid() . '.tmp';
     }
     
-    
-    
     /**
      * Use the readfile command to read a given file within a MPQ archive
      * @param string $archive_name the MPQ archive in question
@@ -81,7 +79,7 @@ class Kohana_Starparse {
         
         $matches        = array();
         $replay_details = self::readfile($file_name, 'replay.details');
-        $replay_details = str_replace(array("\r\n"), array("\100"), $replay_details); // for now
+        $replay_details = str_replace(array("\r\n", "\n"), array("\100"), $replay_details); // for now
         
         preg_match_all("/\002.(\w*?)\002\005.*?(Zerg|Terran|Protoss)\006/i", $replay_details, $matches);
 
