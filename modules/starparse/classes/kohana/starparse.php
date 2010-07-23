@@ -1,9 +1,10 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Kohana_Starparse {
+    
     /**
      * Get the temp directory to store files
-     * @return Ambigous <string, Kohana_Config>
+     * @return Ambigous string
      */
     protected static function _tmp_file()
     {
@@ -15,6 +16,8 @@ class Kohana_Starparse {
         return $tmp_dir . DIRECTORY_SEPARATOR . uniqid() . '.tmp';
     }
     
+    
+    
     /**
      * Use the readfile command to read a given file within a MPQ archive
      * @param string $archive_name the MPQ archive in question
@@ -23,7 +26,11 @@ class Kohana_Starparse {
      */
     protected static function readfile($archive_name, $internal_file_name)
     {
-        $cmd = "readfile " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) ." q";
+        // what exec command are we using?
+        $exec = Kohana::config('starparse');
+        $exec = isset($exec['readfile']) ? $exec['readfile'] : 'readfile';
+        
+        $cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
 
         // catch the output of this command
         ob_start(); {
