@@ -36,7 +36,7 @@ class Kohana_Starparse {
 
             if (isset($config['cgi_replace'])) 
             {
-                $url = str_replace($config['cgi_replace'][0], $config['cgi_replace'][1]);
+                $url = str_replace($config['cgi_replace'][0], $config['cgi_replace'][1], $url);
             }
             
             $ret = trim(@file_get_contents($url));
