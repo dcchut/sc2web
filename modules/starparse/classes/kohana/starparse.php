@@ -9,7 +9,7 @@ class Kohana_Starparse {
     {
         $starparse = Kohana::config('starparse');
         
-        return isset($starparse['tmp_dir']) ? $starparse['tmp_dir'] : '.';
+        return isset($starparse['tmp_dir']) ? realpath($starparse['tmp_dir']) : sys_get_temp_dir();
     }
     
     /**
@@ -52,7 +52,9 @@ class Kohana_Starparse {
         if (!is_null($string))
         {
             $tmp = tempnam(self::_tmp_dir(), 'TMP');
+            
             file_put_contents($tmp, $string);
+            
             return self::get_players($tmp, NULL, TRUE);
         }
         
@@ -121,7 +123,6 @@ class Kohana_Starparse {
             file_put_contents($tmp, $string);
             return self::valid_replay($tmp, NULL, TRUE);
         }
-        
 
         // we must have a file name here, then
         $file_name = realpath($file_name);
