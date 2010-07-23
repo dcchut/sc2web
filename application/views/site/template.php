@@ -41,7 +41,7 @@ $(document).ready(function(){
 <div id="main">
 <?php echo HTML::anchor('', '<h3>nitrated</h3>'); ?>
 <?php echo $main; ?><br /><br />
-created by <?php echo HTML::anchor('player/view/54/dcc', 'dcc'); ?> in <?php echo $exec; ?> seconds.
+created by <i>dcc</i> in <?php echo $exec; ?> seconds.
 </div>
 </body>
 </html>
