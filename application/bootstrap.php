@@ -51,7 +51,6 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  */
 Kohana::init(array(
 	'base_url'   => '/sc2/',
-    'index_file' => '',
 ));
 
 /**
