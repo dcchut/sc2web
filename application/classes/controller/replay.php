@@ -35,7 +35,7 @@ class Controller_Replay extends Controller_Site {
         /*
          * Are we uploading a MASS of ZIP files?
 		 */
-        if ($zip = Archive::factory('zip')->open($_FILES['file']['tmp_name']))
+        if (($zip = Archive::factory('zip')->open($_FILES['file']['tmp_name'])) !== FALSE)
         {
             foreach ($zip->file_list() as $zfile)
             {
