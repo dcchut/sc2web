@@ -27,24 +27,18 @@ class Kohana_Starparse {
         // what exec command are we using?
         $config = Kohana::config('starparse');
         
-		// we do it through the shell.  fuck you, CGI.
-		$exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
-		$cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
+	// we do it through the shell.  fuck you, CGI.
+	$exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
+	$cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
 
-		// catch the output of this command
-		ob_start(); {
-			passthru($cmd);
-		} $ret = trim(ob_get_clean());
-            
+	$ret = trim(shell_exec($cmd));
+
         if ($ret === 'error')
             return FALSE;
        
         return $ret;
     }
-    
-    /*
-     * implement 3-way-many to many relationship (within ORM)
-     */
+
     public static function get_players($file_name, $string = NULL, $delete = FALSE)
     {
         if (!self::valid_replay($file_name, $string))
@@ -64,9 +58,10 @@ class Kohana_Starparse {
         
         $matches        = array();
         $replay_details = self::readfile($file_name, 'replay.details');
-        $replay_details = str_replace(array("\r\n", "\n"), array("\100"), $replay_details); // for now
+        $replay_details = str_replace(array("\r\n", "\n"), array("\100\100", "\100"), $replay_details);
         
-        preg_match_all("/\002.(\w*?)\002\005.*?(Zerg|Terran|Protoss)\006/i", $replay_details, $matches);
+	// in old patches, this found spectators, but fuck old patches, they're old
+        preg_match_all("/\002.(\w+?)\002\005.*?(Zerg|Terran|Protoss)\006/i", $replay_details, $matches);
 
         if ($delete)
             @unlink($file_name);
@@ -101,7 +96,7 @@ class Kohana_Starparse {
         $matches        = array();
         $replay_details = self::readfile($file_name, 'replay.details');
         
-        preg_match("/\002{2}.(\w.*?)\004/i", $replay_details, $matches);
+        preg_match("/\002{2}.(\w.+?)\004/i", $replay_details, $matches);
         
         if ($delete)
             @unlink($file_name);
