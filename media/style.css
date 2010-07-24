@@ -19,6 +19,11 @@ body {
 	background-color: #DAD7E0;
 }
 
+.heading {
+	margin-bottom: 5px;	
+}
+
+/* make links <AWESOME> */
 a:link {
 	text-decoration: underline;
 	color: black;
@@ -39,16 +44,7 @@ a:hover {
 	color: red;
 }
 
-div.replay_viewl {
-	float: left;
-	width: 145px;
-}
-
-div.replay_viewr {
-	float: right;
-	width: 55px;
-}
-
+/* used for the upload2 stripes */
 
 .green {
 	background-color: #D4F7CB;
@@ -58,6 +54,8 @@ div.replay_viewr {
 	background-color: #F2B8BC;
 }
 
+/* alternate row shading applied by js */
+
 .stripe1 {
 	background-color: #D8E0D7;
 }
@@ -66,39 +64,56 @@ div.replay_viewr {
 	background-color: #C9BDCC;
 }
 
-.heading {
-	margin-bottom: 5px;	
-}
 
 /*
 view player
 */
-div.player_viewl {
-	float: left;
-	width: 450px;
-}
-
-div.player_viewr {
-	float: right;
-	width: 55px;
-}
-
 div#player_view_box {
+	overflow: auto;
 	width: 555px;
 	border: 1px solid #000000;
 	border-bottom: 0px;
 }
 
+div.player_view_row {
+	border-bottom: 1px solid #000000;
+	padding: 5px;
+	overflow: auto;
+}
+
+div.player_view_left {
+	float: left;
+	width: 450px;
+}
+
+div.player_viewr_right {
+	float: right;
+	width: 55px;
+}
+
+
+/* view a replay CSS */
 div#replay_view_box {
+	overflow: auto;
 	width: 220px;
 	border: 1px solid #000000;
 	border-bottom: 0px;
 }
 
-div.replay_row {
-	height: 20px;
-	padding: 5px;
+div.replay_view_row {
 	border-bottom: 1px solid #000000;
+	padding: 5px;
+	overflow: auto;
+}
+
+div.replay_view_left {
+	float: left;
+	width: 145px;
+}
+
+div.replay_view_right {
+	float: right;
+	width: 55px;
 }
 
 /*
@@ -111,12 +126,12 @@ div#replay_upload2_box {
 	border-bottom: 0px;
 }
 
-div.replay_upload2l {
+div.replay_upload2_left {
 	float: left;
 	width: 480px;
 }
 
-div.replay_upload2r {
+div.replay_upload2_right {
 	float: right;
 	width: 20px;
 }

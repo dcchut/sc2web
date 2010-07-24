@@ -6,9 +6,9 @@ echo HTML::anchor('replay/download/' . $replay['id'], 'download now'); ?><br /><
 <div class="heading"><b>players</b></div>
 <div id="replay_view_box">
     <?php foreach ($players as $c): ?>
-    <div class="replay_row stripes">
-        <div class="replay_viewl"><?php echo HTML::anchor(Prettylink::uri('player', $c->player->id), $c->player->name); ?></div>
-        <div class="replay_viewr"><?php echo $c->race->name; ?></div>
+    <div class="replay_view_row stripes">
+        <div class="replay_view_left"><?php echo HTML::anchor(Prettylink::uri('player', $c->player->id), $c->player->name); ?></div>
+        <div class="replay_view_right"><?php echo $c->race->name; ?></div>
     </div>
     <?php endforeach; ?>
 </div><br />
