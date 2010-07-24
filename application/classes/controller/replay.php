@@ -7,9 +7,6 @@ class Controller_Replay extends Controller_Site {
     public function action_upload()
     {
         $this->subtitle = 'upload a replay';
-
-        $replay = ORM::factory('replay');
-        
         $this->template->main = View::factory('replay/upload');
     }
     
@@ -77,7 +74,6 @@ class Controller_Replay extends Controller_Site {
     /**
      * Download a replay (throws the replay at the user)
      * @param integer $id replay ID
-     * @return void
      */
     public function action_download($id)
     {
@@ -100,10 +96,13 @@ class Controller_Replay extends Controller_Site {
     /**
      * Display a replay with some details about it
      * @param integer $id
-     * @return string
      */
     public function action_view($id)
     {
+        // cache this method, but not for <too> long
+        $this->cache          = TRUE;
+        $this->cache_duration = 10;
+        
         if (!Model_Replay::exists($id))
             return ($this->template->main = 'an error occured');
         

@@ -7,3 +7,4 @@ sc2.db3
 *.exe
 *.cgi
 .htaccess
+.buildpath

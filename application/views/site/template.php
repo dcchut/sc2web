@@ -2,13 +2,13 @@
 <head>
 <title><?php echo $title; ?></title>
 <!--  created 22/07/2010 -->
-<?php echo HTML::style('media/style.css'); ?>
-<?php echo HTML::style('media/jquery.tooltip.css'); ?>
-<?php echo HTML::script('media/jquery.js'); ?>
-<?php echo HTML::script('media/jquery.bgiframe.js'); ?>
-<?php echo HTML::script('media/jquery.delegate.js'); ?>
-<?php echo HTML::script('media/jquery.dimensions.js'); ?>
-<?php echo HTML::script('media/jquery.tooltip.js'); ?>
+<?php echo HTML::style('media/css/style.css'); ?>
+<?php echo HTML::style('media/js/jquery.tooltip.css'); ?>
+<?php echo HTML::script('media/js/jquery.js'); ?>
+<?php echo HTML::script('media/js/jquery.bgiframe.js'); ?>
+<?php echo HTML::script('media/js/jquery.delegate.js'); ?>
+<?php echo HTML::script('media/js/jquery.dimensions.js'); ?>
+<?php echo HTML::script('media/js/jquery.tooltip.js'); ?>
 </head>
 <body>
 <script type="text/javascript">

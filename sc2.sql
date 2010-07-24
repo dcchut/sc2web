@@ -36,12 +36,13 @@ race_id integer(8)
 
 CREATE TABLE races (
 id integer PRIMARY KEY,
-name varchar(20) UNIQUE NOT NULL
+name varchar(20) UNIQUE NOT NULL,
+short_name varchar(20) UNIQUE NOT NULL
 );
 
 -- insert our trusty races
-INSERT INTO races ('name') VALUES ('Zerg');
-INSERT INTO races ('name') VALUES ('Protoss');
-INSERT INTO races ('name') VALUES ('Terran');
+INSERT INTO races ('name', 'short_name') VALUES ('Zerg', 'Z');
+INSERT INTO races ('name', 'short_name') VALUES ('Protoss', 'P');
+INSERT INTO races ('name', 'short_name') VALUES ('Terran', 'T');
 
 COMMIT TRANSACTION;

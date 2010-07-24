@@ -8,7 +8,7 @@ class Model_Player extends ORM {
     
     public static function get_player_id($name)
     {
-        $cache     = Cache::instance('xcache');
+        $cache     = Cache::instance('default');
         $cache_key = 'model/player/get_player_id/' . $name;
         
         if (!($player_id = $cache->get($cache_key, FALSE)))
@@ -36,7 +36,7 @@ class Model_Player extends ORM {
     public function downloaded()
     {
         // cache this to avoid doing this OVER and OVER and OVER again
-        $cache     = Cache::instance('xcache');
+        $cache     = Cache::instance('default');
         $cache_key = 'model/player/' . $this->pk() . '/downloaded';
         
         if (!($sum = $cache->get($cache_key, FALSE)))

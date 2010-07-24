@@ -19,9 +19,9 @@ class Model_Race extends ORM {
     public static function get_match_race($player_id, $replay_id)
     {
         // what cache key are we gonna use here?
-        $cache     = Cache::instance('xcache');
-        $cache_key = 'model/race/get_match_race/' . $player_id . '/' . $replay_id;
-        
+        $cache     = Cache::instance('default');
+        $cache_key = $cache->key('get_match_race', array($player_id, $replay_id));
+
         if (!($race = $cache->get($cache_key, FALSE)))
         {
             // first find the race ID

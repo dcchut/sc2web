@@ -27,16 +27,14 @@ class Kohana_Starparse {
         // what exec command are we using?
         $config = Kohana::config('starparse');
         
-	// we do it through the shell.  fuck you, CGI.
-	$exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
-	$cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
+		// we do it through the shell.  fuck you, CGI.
+		$exec = isset($config['readfile']) ? $config['readfile'] : 'readfile';
+		$cmd = $exec . " " . escapeshellarg($archive_name) . " " . escapeshellarg($internal_file_name) . " q";
 
-	$ret = trim(shell_exec($cmd));
-
-        if ($ret === 'error')
-            return FALSE;
-       
-        return $ret;
+		if (($return = trim(shell_exec($cmd))) === 'error')
+			return FALSE;
+			
+		return $return;
     }
 
     public static function get_players($file_name, $string = NULL, $delete = FALSE)

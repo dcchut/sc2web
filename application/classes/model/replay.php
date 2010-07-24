@@ -4,8 +4,8 @@ class Model_Replay extends ORM {
     
     protected $_has_many    = array('players' => array('model'   => 'player',
                                                        'through' => 'players_replays'),
-                                 	'races'      => array('model'   => 'race',
-                                                       'through' => 'players_replays'));
+                         	    'races'      => array('model'   => 'race',
+                                                          'through' => 'players_replays'));
     
     protected $_belongs_to   = array('map' => array());
     
@@ -43,7 +43,7 @@ class Model_Replay extends ORM {
         $this->save();
         
         // perhaps in future implement some sort of file-cache in-memory?
-        $cache     = Cache::instance('xcache');
+        $cache     = Cache::instance('default');
         $cache_key = 'model/replay/' . $this->pk() . '/download';
         
         if ($data = $cache->get($cache_key, FALSE))
@@ -148,7 +148,7 @@ class Model_Replay extends ORM {
     public function players($ignore = FALSE)
     {
         // our resultant players list
-        $cache     = Cache::instance('xcache');
+        $cache     = Cache::instance('default');
         $cache_key = 'model/replay/' . $this->pk() . '/players';
         
         if (!($result = $cache->get($cache_key, FALSE)))
@@ -214,7 +214,32 @@ class Model_Replay extends ORM {
      */
     public function title()
     {
-        return $this->map->name;
+	$players = $this->players->find_all()->as_array();
+
+	// playing a 1v1, format it nicely
+	if (count($players) == 2)
+	{
+		return $players[0]->name . ' (' . Model_Race::get_match_race($players[0]->id, $this->id)->short_name . ')' .
+		       ' vs ' 		 . 
+		       $players[1]->name . ' (' . Model_Race::get_match_race($players[1]->id, $this->id)->short_name . ')' .
+		       ' on '            . 
+		       $this->map->name  .  
+		       date(' (d/m/Y)', $this->upload_date);
+	}
+
+	// otherwise do something stupid, for now
+	$player_list = '';
+
+	foreach ($players as $player)
+	{
+		$player_list .= $player->name . ', ';
+	}
+
+	$player_list = preg_replace('/(\w+),\s(\w+)$/', 
+				    '$1 and $2', 
+				    substr($player_list, 0, -2));
+
+	return $player_list . ' on ' . $this->map->name . date(' (d/m/Y)', $this->upload_date);
     }
 }
 
