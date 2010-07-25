@@ -2,9 +2,9 @@
 
 class Model_Replay extends ORM {
     
-    protected $_has_many    = array('players' => array('model'   => 'player',
-                                                       'through' => 'players_replays'),
-                         	    'races'      => array('model'   => 'race',
+    protected $_has_many    = array('players'    => array('model'   => 'player',
+                                                       'through'    => 'players_replays'),
+                         	    	'races'      => array('model'   => 'race',
                                                           'through' => 'players_replays'));
     
     protected $_belongs_to   = array('map' => array());

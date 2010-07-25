@@ -6,7 +6,7 @@ class Controller_Replay extends Controller_Site {
      */
     public function action_upload()
     {
-        $this->subtitle = 'upload a replay';
+        $this->subtitle       = 'upload a replay';
         $this->template->main = View::factory('replay/upload');
     }
     
@@ -15,7 +15,7 @@ class Controller_Replay extends Controller_Site {
      */
     public function action_upload2()
     {
-        $this->subtitle = 'replay(s) uploaded';
+        $this->subtitle        = 'replay(s) uploaded';
         $this->template->main .= View::factory('replay/upload2/header');
         
         /*
