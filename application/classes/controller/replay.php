@@ -34,6 +34,7 @@ class Controller_Replay extends Controller_Site {
 		 */
         if (($zip = Archive::factory('zip')->open($_FILES['file']['tmp_name'], FALSE, $_FILES['file']['name'])) !== FALSE)
         {
+            // how do we handle a <large number> of files at once - possibly put them in a 'waiting basket'
             foreach ($zip->file_list() as $zfile)
             {
                 $zr = $zip->read_file($zfile);
@@ -42,12 +43,14 @@ class Controller_Replay extends Controller_Site {
                 
                 if ($valid = Starparse::valid_replay(NULL, $zr))
                 {
-                    $id = ORM::factory('replay')->store($zfile, $zr)->pk();
+                    $replay = ORM::factory('replay')->store($zfile, $zr);
+                    
+                    $id     = $replay->pk();
                 }
                 
                 $this->template->main .= View::factory('replay/upload2', array('success' => $valid,
                                                                                'id'      => (int)$id,
-                                                                               'replay'  => Text::limit_chars($zfile, 50)));
+                                                                               'replay'  => ($id) ? $replay->title() : Text::limit_chars($zfile, 50)));
             }
         }
         else
@@ -108,9 +111,11 @@ class Controller_Replay extends Controller_Site {
         
         // get details about this replay
         $replay = ORM::factory('replay', $id);
-        
-        $this->subtitle       = 'viewing replay: ' . htmlentities(pathinfo($replay->filename, PATHINFO_FILENAME));
+
+        $this->subtitle       = 'viewing replay - ' . ($title = htmlentities($replay->title()));
         $this->template->main = View::factory('replay/view', array('replay'    => $replay->as_array(),
-                                                                   'players'   => $replay->players(),));
+                                                                   'players'   => $replay->players(),
+                                                                   'map'       => $replay->map->name,
+                                                                   'title'     => $title,));
     }
 }

@@ -57,8 +57,8 @@ class Kohana_Starparse {
         $matches        = array();
         $replay_details = self::readfile($file_name, 'replay.details');
         $replay_details = str_replace(array("\r\n", "\n"), array("\100\100", "\100"), $replay_details);
-        
-	// in old patches, this found spectators, but fuck old patches, they're old
+
+	    // in old patches, this found spectators, but fuck old patches, they're old
         preg_match_all("/\002.(\w+?)\002\005.*?(Zerg|Terran|Protoss)\006/i", $replay_details, $matches);
 
         if ($delete)
@@ -104,6 +104,34 @@ class Kohana_Starparse {
             
         return FALSE;
     }
+    
+    public static function get_type($file_name, $string = NULL, $delete = FALSE)
+    {
+        if (!self::valid_replay($file_name, $string))
+        {
+            return FALSE;
+        }
+        
+        if (!is_null($string))
+        {
+            $temp_file_name = self::_tmp_file();
+            file_put_contents($temp_file_name, $string);
+            return self::get_type($temp_file_name, NULL, TRUE);
+        }
+        
+        $archive_name = realpath($file_name);
+        
+        $matches        = array();
+        $replay_details = self::readfile($file_name, 'replay.attributes.events');
+        
+        preg_match("/\020(.{3})$/i", $replay_details, $matches);
+        
+        if ($delete)
+            @unlink($file_name);
+        
+        return strrev($matches[1]); // for some reason, they're backwards
+    }
+    
     /**
      * Is a specified replay (file/string) valid?
      * @param string $file_name Replay file to check
@@ -125,13 +153,14 @@ class Kohana_Starparse {
         if (!file_exists($file_name))
             return FALSE;
 
-        // start output buffering - catch the execution (think of a better way to do this, later)
-        $listfile = self::readfile($file_name, '(listfile)', TRUE);
+        // is this the best way?
+        $listfile = self::readfile($file_name, '(listfile)');
+        $attributes = self::readfile($file_name, 'replay.attributes.events');
         
         if ($delete)
             @unlink($file_name);
-
-        if (!$listfile)
+            
+        if (!$listfile || !$attributes || ($attributes && strlen($attributes) == 0))
             return FALSE;
             
         // replay.details && replay.initData

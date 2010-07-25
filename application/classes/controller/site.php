@@ -59,8 +59,11 @@ class Controller_Site extends Controller_Template {
             
             if (($main = Cache::instance('default')->get($this->cache_key, FALSE)) !== FALSE)
             {
+                $main = unserialize($main);
+                
                 // do this like the bootstrap would
-                $this->template->main = $main;
+                $this->template->main = $main[0];
+                $this->subtitle       = $main[1];
                 
                 $this->after();
                 
@@ -98,7 +101,7 @@ class Controller_Site extends Controller_Template {
         // cache that motherfunker
         if ($this->auto_render && $this->cache)
         {
-            Cache::instance('default')->set($this->cache_key, (string)$this->template->main, $this->cache_duration);
+            Cache::instance('default')->set($this->cache_key, serialize(array((string)$this->template->main, $this->subtitle)), $this->cache_duration);
         }
         
         return $return;

@@ -7,7 +7,8 @@ class Model_Replay extends ORM {
                          	    	'races'      => array('model'   => 'race',
                                                           'through' => 'players_replays'));
     
-    protected $_belongs_to   = array('map' => array());
+    protected $_belongs_to   = array('map'  => array(),
+                                     'type' => array());
     
     protected $replay_dir;
 
@@ -75,29 +76,31 @@ class Model_Replay extends ORM {
      */
     public function store($file, $string = NULL)
     {
-        if (!is_null($string))
-        {
-            $hash     = sha1($string);
-            $filename = substr($file, 0, 200);
-            $map      = Model_Map::get_map_id(Starparse::get_map(FALSE, $string));
-            $players  = Starparse::get_players(FALSE, $string);
-        }
-        else
-        {
-            // ensure the uploaded file is valid
-            if (!Upload::valid($file))
-                return FALSE;
-
-            $hash     = sha1_file($file['tmp_name']);
-            $filename = substr($file['name'], 0, 200);
-            $map      = Model_Map::get_map_id(Starparse::get_map($file['tmp_name']));
-            $players  = Starparse::get_players($file['tmp_name']);
-        }
-
+        // you aren't wanted here, invalid uploads
+        if (is_null($string) && !Upload::valid($file))
+            return FALSE;
+            
         // check if this replay is already in the database
+        $hash = (!is_null($string)) ? sha1($string) : sha1_file($file['tmp_name']);
+
         if (($replay = $this->clear()->where('hash', '=', $hash)->find()) && !$replay->empty_pk())
             return $replay;    // not sure how to handle this case yet
             
+        if (!is_null($string))            
+        {
+            $filename = substr($file, 0, 200);
+            $map      = Model_Map::get_map_id(Starparse::get_map(FALSE, $string));
+            $players  = Starparse::get_players(FALSE, $string);
+            $type     = Model_Type::get_type_id(Starparse::get_type(FALSE, $string));
+        }
+        else
+        {
+            $filename = substr($file['name'], 0, 200);
+            $map      = Model_Map::get_map_id(Starparse::get_map($file['tmp_name']));
+            $players  = Starparse::get_players($file['tmp_name']);
+            $type     = Model_Type::get_type_id(Starparse::get_type($file['tmp_name']));
+        }
+        
         // this file hasn't been uploaded, so insert a record
         $this->clear();
         $this->filename    = $filename;
@@ -105,7 +108,7 @@ class Model_Replay extends ORM {
         $this->user_id     = 1;
         $this->downloaded  = 0;
         $this->map_id      = $map;
-        
+        $this->type_id     = $type;
         $this->hash        = $hash;
         
         if (!$this->save())
@@ -187,25 +190,25 @@ class Model_Replay extends ORM {
     
     public function opponents_text($player_id)
     {
-           // get the opponents of this replay
-           $opponents      = $this->players($player_id);
-          
-           $opponents_text = '';
-           $opponents_c    = count($opponents);
+       // get the opponents of this replay
+       $opponents      = $this->players($player_id);
+      
+       $opponents_text = '';
+       $opponents_c    = count($opponents);
+       
+       $i = 0;
+       
+       foreach ($opponents as $r)
+       {
+           $opponents_text .= $r->player->name;
+           $opponents_text .= ($i == $opponents_c - 2) ? ' and ' : ', ';
            
-           $i = 0;
-           
-           foreach ($opponents as $r)
-           {
-               $opponents_text .= $r->player->name;
-               $opponents_text .= ($i == $opponents_c - 2) ? ' and ' : ', ';
-               
-               $i++;
-           }
-
-           $opponents_text = substr($opponents_text, 0, -2);
-
-           return $opponents_text;
+           $i++;
+       }
+    
+       $opponents_text = substr($opponents_text, 0, -2);
+    
+       return $opponents_text;
     }
     
     /**
@@ -214,32 +217,16 @@ class Model_Replay extends ORM {
      */
     public function title()
     {
-	$players = $this->players->find_all()->as_array();
-
-	// playing a 1v1, format it nicely
-	if (count($players) == 2)
-	{
-		return $players[0]->name . ' (' . Model_Race::get_match_race($players[0]->id, $this->id)->short_name . ')' .
-		       ' vs ' 		 . 
-		       $players[1]->name . ' (' . Model_Race::get_match_race($players[1]->id, $this->id)->short_name . ')' .
-		       ' on '            . 
-		       $this->map->name  .  
-		       date(' (d/m/Y)', $this->upload_date);
-	}
-
-	// otherwise do something stupid, for now
-	$player_list = '';
-
-	foreach ($players as $player)
-	{
-		$player_list .= $player->name . ', ';
-	}
-
-	$player_list = preg_replace('/(\w+),\s(\w+)$/', 
-				    '$1 and $2', 
-				    substr($player_list, 0, -2));
-
-	return $player_list . ' on ' . $this->map->name . date(' (d/m/Y)', $this->upload_date);
+        $players = $this->players->find_all()->as_array();
+        
+        if (count($players) > 2)
+        {
+            return $this->type->name . ' on ' .$this->map->name;
+        }
+        else
+        {
+            return $players[0]->name . ' vs ' . $players[1]->name . ' on ' . $this->map->name;
+        }
     }
 }
 

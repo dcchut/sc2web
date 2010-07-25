@@ -70,7 +70,7 @@ view player
 */
 div#player_view_box {
 	overflow: auto;
-	width: 555px;
+	width: 700px;
 	border: 1px solid #000000;
 	border-bottom: 0px;
 }
@@ -83,7 +83,7 @@ div.player_view_row {
 
 div.player_view_left {
 	float: left;
-	width: 450px;
+	width: 600px;
 }
 
 div.player_viewr_right {
